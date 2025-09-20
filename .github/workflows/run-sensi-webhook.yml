@@ -1,0 +1,29 @@
+name: Run Sensi Webhook
+
+on:
+  schedule:
+    - cron: '30 15 * * *'  # Runs at 11:30 AM EST (15:30 UTC)
+  workflow_dispatch:
+
+jobs:
+  call-webhook:
+    runs-on: ubuntu-latest
+
+    env:
+      WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+      BEARER_TOKEN: ${{ secrets.BEARER_TOKEN }}
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install requests
+        run: pip install requests
+
+      - name: Run webhook script
+        run: python worker.py
